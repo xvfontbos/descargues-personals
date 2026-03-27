@@ -1,0 +1,17 @@
+{
+  "name": "XVI Downloader",
+  "short_name": "XVI DL",
+  "description": "Descarrega vídeos de YouTube, Vimeo, Twitter i molts més",
+  "start_url": "./downloader.html",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#111111",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23111'/><text y='130' x='30' font-size='120' fill='%23c8a97e'>⬇</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}
