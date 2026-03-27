@@ -1,5 +1,5 @@
 const CACHE = 'xvi-dl-v1';
-const ASSETS = ['./downloader.html', './manifest.json'];
+const ASSETS = ['./index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
@@ -18,8 +18,11 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Per a les crides a l'API de cobalt, sempre xarxa
-  if (e.request.url.includes('cobalt.tools')) return;
+  // Ignorem les crides a l'API i al Proxy (perquè sempre vagin per internet)
+  if (e.request.url.includes('cobalt.tools') || e.request.url.includes('corsproxy.io')) {
+    return;
+  }
+  
   e.respondWith(
     caches.match(e.request).then(r => r || fetch(e.request))
   );
