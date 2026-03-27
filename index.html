@@ -215,12 +215,10 @@
   </main>
 
   <script>
-    // Registra el Service Worker per a PWA
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
     }
 
-    // Permet enganxar amb Ctrl+V directament
     document.getElementById('video-url').addEventListener('keydown', e => {
       if (e.key === 'Enter') fetchVideo();
     });
@@ -236,14 +234,13 @@
 
       if (!urlInput) { alert("Si us plau, posa un enllaç."); return; }
 
-      // Reset UI
       btn.disabled = true;
       loader.style.display = 'block';
       resultArea.style.display = 'none';
       errorArea.style.display = 'none';
 
       try {
-        // Cobalt.tools: API pública, sense clau, sense registre
+        // Hem corregit els noms dels paràmetres (videoCodec i videoQuality)
         const response = await fetch('https://api.cobalt.tools/api/json', {
           method: 'POST',
           headers: {
@@ -252,12 +249,17 @@
           },
           body: JSON.stringify({
             url: urlInput,
-            vCodec: vcodec,
-            vQuality: quality,
+            videoCodec: vcodec,
+            videoQuality: quality,
             isAudioOnly: false,
             disableMetadata: false
           })
         });
+
+        // Si la resposta no és OK, és que hi ha un problema de CORS o de l'API
+        if (!response.ok) {
+            throw new Error(`L'API ha respost amb error ${response.status}. Possible bloqueig de CORS.`);
+        }
 
         const data = await response.json();
 
@@ -265,24 +267,20 @@
         btn.disabled = false;
 
         if (data.status === 'stream' || data.status === 'redirect' || data.status === 'tunnel') {
-          // Èxit: tenim la URL directa
           resultArea.style.display = 'block';
           const link = document.getElementById('download-link');
           link.href = data.url;
-          // Intenta descarregar directament; si no pot (CORS), obre en nova pestanya
-          link.setAttribute('download', '');
+          // IMPORTANT: El navegador sol bloquejar el 'download' forçat des de dominis externs
+          // per això fem servir target="_blank" per seguretat.
           document.getElementById('result-msg').textContent =
             `Vídeo llest · Qualitat: ${quality}p · ${vcodec.toUpperCase()}`;
         } else if (data.status === 'picker') {
-          // Múltiples opcions (p.ex. Instagram carrusel)
           resultArea.style.display = 'block';
           document.getElementById('result-msg').textContent =
-            `S'han trobat ${data.picker.length} fitxers. Es baixarà el primer.`;
+            `S'han trobat diversos fitxers. Es baixarà el primer.`;
           const link = document.getElementById('download-link');
           link.href = data.picker[0].url;
-          link.setAttribute('download', '');
         } else {
-          // Error de cobalt
           throw new Error(data.text || 'No s\'ha pogut processar l\'enllaç.');
         }
 
@@ -290,7 +288,13 @@
         loader.style.display = 'none';
         btn.disabled = false;
         errorArea.style.display = 'block';
-        errorArea.textContent = `Error: ${err.message}`;
+        
+        // Missatge amigable per a l'usuari sobre el CORS
+        if (err.message.includes('fetch') || err.message.includes('CORS')) {
+            errorArea.innerHTML = "<strong>Error de connexió (CORS):</strong> L'API de Cobalt no permet peticions directes des del navegador a GitHub Pages. <br><small>Prova de fer-ho servir en local o des d'una altra instància.</small>";
+        } else {
+            errorArea.textContent = `Error: ${err.message}`;
+        }
       }
     }
   </script>
