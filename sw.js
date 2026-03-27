@@ -1,6 +1,8 @@
 const CACHE = 'xvi-dl-v1';
 const ASSETS = ['./index.html', './manifest.json'];
 
+const EXCLUDED_HOSTS = ['cobalt.tools', 'kwiateusz.pl', 'allorigins.win'];
+
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE).then(c => c.addAll(ASSETS))
@@ -18,11 +20,13 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Ignorem les crides a l'API i al Proxy (perquè sempre vagin per internet)
-  if (e.request.url.includes('cobalt.tools') || e.request.url.includes('corsproxy.io')) {
-    return;
+  const url = new URL(e.request.url);
+
+  // Si la petició és per a una de les APIs, no fem res (deixem que vagi a internet)
+  if (EXCLUDED_HOSTS.some(host => url.hostname.includes(host))) {
+    return; 
   }
-  
+
   e.respondWith(
     caches.match(e.request).then(r => r || fetch(e.request))
   );
