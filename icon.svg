@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="32" fill="#ffffff"/>
+  <!-- Fletxa baixant -->
+  <line x1="96" y1="38" x2="96" y2="118" stroke="#111111" stroke-width="12" stroke-linecap="round"/>
+  <polyline points="62,90 96,126 130,90" fill="none" stroke="#111111" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Línia base (safata) -->
+  <line x1="40" y1="152" x2="152" y2="152" stroke="#111111" stroke-width="12" stroke-linecap="round"/>
+</svg>

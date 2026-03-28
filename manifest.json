@@ -1,7 +1,7 @@
 {
   "name": "XVI Downloader",
   "short_name": "XVI DL",
-  "description": "Descarrega vídeos a la carta",
+  "description": "Descarrega vídeos de YouTube, Vimeo, Twitter i molts més",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1a1a1a",

@@ -1,12 +1,8 @@
-const CACHE = 'xvi-dl-v1';
-const ASSETS = ['./index.html', './manifest.json'];
-
-const EXCLUDED_HOSTS = ['cobalt.tools', 'kwiateusz.pl', 'allorigins.win'];
+const CACHE = 'xvi-dl-v2';
+const ASSETS = ['./index.html', './manifest.json', './video_blanc.svg', './llibre_blanc.svg', './auriculars_blanc.svg'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS))
-  );
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
   self.skipWaiting();
 });
 
@@ -20,13 +16,7 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
-
-  // Si la petició és per a una de les APIs, no fem res (deixem que vagi a internet)
-  if (EXCLUDED_HOSTS.some(host => url.hostname.includes(host))) {
-    return; 
-  }
-
+  if (e.request.url.includes('cobalt.tools')) return;
   e.respondWith(
     caches.match(e.request).then(r => r || fetch(e.request))
   );
